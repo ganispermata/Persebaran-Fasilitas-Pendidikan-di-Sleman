@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Metadata-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="author" content="DIVSIG UGM">
+    <meta name="description" content="leaflet basic">
+    
+    <!--Judul pada tab browser-->
+    <title>WebGIS Acara3</title>
+
+    <!--Leaflet CSS Library-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
+
+    <!--Tab browser icon-->
+    <link rel="icon" type="image/x-icon" href="http://luk.staff.ugm.ac.id/logo/UGM/Resmi/Warna.gif">
+
+    <!-- Search CSS Library -->
+		<link rel="stylesheet" href="plugins/leaflet-search/leaflet-search.css">
+    <!-- Geolocation CSS Library for Plugin -->
+        <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css">
+    <!-- Leaflet Mouse Position CSS Library -->
+        <link rel="stylesheet" href="plugins/leaflet-mouseposition/L.Control.MousePosition.css">
+    <!-- Leaflet Measure CSS Library -->
+        <link rel="stylesheet" href="plugins/leaflet-measure/leaflet-measure.css">
+    <!-- EasyPrint CSS Library -->
+        <link rel="stylesheet" href="plugins/leaflet-easyprint/easyPrint.css">
+    <!-- MarkerCluster CSS Library -->
+        <link rel="stylesheet" href="plugins/leaflet-markercluster/MarkerCluster.css" />
+	    <link rel="stylesheet" href="plugins/leaflet-markercluster/MarkerCluster.Default.css" />
+    <!-- RoutingMachine CSS Library -->
+        <link rel="stylesheet" href="plugins/leaflet-routingmachine/leaflet-routing-machine.css" />
+    
+    <style>
+    /* Tampilan peta fullscreen */
+    html, body, #map {
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    }
+
+    /* Background pada Judul*/
+    *.info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background:white;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+        text-align: center;
+    }
+    .info h2 {
+        margin: 0 0 5px;
+        color: #777;
+    }
+    
+    </style>
+</head>
+<body>
+    <!--Leaflet JavaScript Library-->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    <div id="map"></div>
+
+    <script src="leaflet/leaflet.ajax.js"> </script>
+    <script src="leaflet/leaflet.ajax.min.js"> </script>
+
+    <!-- Search JavaScript Library -->
+    <script src="plugins/leaflet-search/leaflet-search.js"></script>
+
+    <!-- Geolocation Javascript Library -->
+        <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
+
+    <!-- Leaflet Mouse Position JavaScript Library -->
+        <script src="plugins/leaflet-mouseposition/L.Control.MousePosition.js"></script>
+
+    <!-- Leaflet Measure JavaScript Library -->
+        <script src="plugins/leaflet-measure/leaflet-measure.js"></script>
+
+    <!-- EasyPrint JavaScript Library -->
+        <script src="plugins/leaflet-easyprint/leaflet.easyPrint.js"></script>
+
+    <!-- MarkerCluster JavaScript Library -->
+        <script src="plugins/leaflet-markercluster/MarkerCluster.js"></script>
+
+    <!-- RoutingMachine JavaScript Library -->
+        <script src="plugins/leaflet-routingmachine/leaflet-routing-machine.js"></script>
+        <script src="plugins/leaflet-routingmachine/leaflet-routing-machine.min.js"></script>
+    
+    <script>
+        var datatitik ={
+            type: "FeatureCollection",
+            features: [
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA Negeri 1 Sleman" }, geometry: { type: "Point", coordinates: [110.33897508179066, -7.683233494461209] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA Negeri 2 Sleman" }, geometry: { type: "Point", coordinates: [110.3724698106269, -7.702034509926711] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA Negeri 1 Mlati" }, geometry: { type: "Point", coordinates: [110.3293414106271, -7.733665713190144] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA Negeri 1 Seyegan" }, geometry: { type: "Point", coordinates: [110.30806719713532, -7.707508071097276] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA Muhamadiyah 1 Sleman" }, geometry: { type: "Point", coordinates: [110.34398382019894, -7.691988147667712] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMK Muhamadiyah 1 Sleman" }, geometry: { type: "Point", coordinates: [110.35134492597135, -7.681461773526223] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA Santo Mikael Yogyakarta" }, geometry: { type: "Point", coordinates: [110.33734973946312, -7.718639120048157] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA & SMK Sulaiman" }, geometry: { type: "Point", coordinates: [110.34972361247976, -7.703202402357552] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMA IMBS Yogyakarta" }, geometry: { type: "Point", coordinates: [110.3832181836439, -7.738220534039646] } },
+                { type: "Feature", properties: { Id: 0, Lowis: "SMP - SMA Budi Utama" }, geometry: { type: "Point", coordinates: [110.36380553946348, -7.766530990219068] } },
+            ]
+        }
+
+        /* Initial Map */
+        var map = L.map('map').setView([-1.850876,118.876786],4); //lat, long, zoom
+
+        /* Tile Basemap */ 
+        var basemap1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="DIVSIG UGM" target="_blank">DIVSIG UGM</a>'});
+        var basemap2 = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'});
+        var basemap3 = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',maxZoom: 16});
+        var basemap4 = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {maxZoom: 17, attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'});
+        basemap3.addTo(map);
+
+        //Marker
+        var Sekolah = L.icon({
+            iconUrl: 'assets/marker-green.png',
+            iconSize: [40, 40],
+
+        })
+
+        /* Layer Marker */
+        var marker1 = L.marker([-7.683233494461209, 110.33897508179066], {icon: Sekolah}).addTo(map);
+        marker1.addTo(map);
+        marker1.bindPopup("SMA Negeri 1 Sleman");
+        var marker2 = L.marker([-7.702034509926711, 110.3724698106269], {icon: Sekolah}).addTo(map);
+        marker2.addTo(map);
+        marker2.bindPopup("SMA Negeri 2 Sleman");
+        var marker3 = L.marker([-7.733665713190144, 110.3293414106271], {icon: Sekolah}).addTo(map);
+        marker3.addTo(map);
+        marker3.bindPopup("SMA Negeri 1 Mlati");
+        var marker4 = L.marker([-7.707508071097276, 110.30806719713532], {icon: Sekolah}).addTo(map);
+        marker4.addTo(map);
+        marker4.bindPopup("SMA Negeri 1 Seyegan");
+        var marker5 = L.marker([-7.691988147667712, 110.34398382019894], {icon: Sekolah}).addTo(map);
+        marker5.addTo(map);
+        marker5.bindPopup("SMA Muhamadiyah 1 Sleman");
+        var marker6 = L.marker([-7.681461773526223, 110.35134492597135], {icon: Sekolah}).addTo(map);
+        marker6.addTo(map);
+        marker6.bindPopup("SMK Muhamadiyah 1 Sleman");
+        var marker7 = L.marker([-7.718639120048157, 110.33734973946312], {icon: Sekolah}).addTo(map);
+        marker7.addTo(map);
+        marker7.bindPopup("SMA Santo Mikael Yogyakarta");
+        var marker8 = L.marker([-7.703202402357552, 110.34972361247976], {icon: Sekolah}).addTo(map);
+        marker8.addTo(map);
+        marker8.bindPopup("SMA & SMK Sulaiman");
+        var marker9 = L.marker([-7.738220534039646, 110.3832181836439], {icon: Sekolah}).addTo(map);
+        marker9.addTo(map);
+        marker9.bindPopup("SMA IMBS Yogyakarta");
+        var marker10 = L.marker([-7.766530990219068, 110.36380553946348], {icon: Sekolah}).addTo(map);
+        marker10.addTo(map);
+        marker10.bindPopup("SMP - SMA Budi Utama");
+
+        /*Plugin Mouse Position Coordinate */
+        L.control.mousePosition({position:'bottomleft',
+        separator: ',',
+        prefix: 'Koordinat : '
+        }).addTo(map);
+
+        /* Judul dan Subjudul */
+        var title = new L.Control();
+          title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+          };
+            title.update = function () {
+            this._div.innerHTML = '<h2>LATIHAN WEBGIS | PERSEBARAN FASILITAS PENDIDIKAN KABUPATEN SLEMAN</h2>MATAKULIAH PEMROGRAMAN SPASIAL : WEB'
+            };
+            title.addTo(map);
+
+        /* Control Layer */
+        var baseMaps = {
+            "OpenStreetMap": basemap1,
+            "Esri Imagery": basemap2,
+            "Nat Geo World": basemap3,
+            "OpenTopoMap": basemap4
+        };
+
+        var overlayMaps = {
+            "SMA Negeri 1 Sleman": marker1,
+            "SMA Negeri 2 Sleman": marker2,
+            "SMA Negeri 1 Mlati": marker3,
+            "SMA Negeri 1 Seyegan":marker4,
+            "SMA Muhamadiyah 1 Sleman":marker5,
+            "SMK Muhamadiyah 1 Sleman":marker6,
+            "SMA Santo Mikael Yogyakarta":marker7,
+            "SMA & SMK Sulaiman":marker8,
+            "SMA IMBS Yogyakarta":marker9,
+            "SMP - SMA Budi Utama":marker10,
+        };
+
+        L.control.layers(baseMaps, overlayMaps, {collapsed: false}).addTo(map);
+
+        /*Memberikan popUp Data SHP*/
+        baseMaps
+        
+        function popUp(f,I){
+            var out = [];
+            if (f.properties){
+                for(key in f.properties){
+                    out.push(key+": "+f.properties[key]);
+                }
+                I.bindPopup(out.join("<br />"));
+                
+            }
+        }
+
+        /* Scale Bar */
+        L.control.scale({
+            maxWidth: 150,position:'bottomright'
+        }).addTo(map);
+        var style1 = {
+            "color": "Black",
+            "weight":"2",
+            "opacity": 0.65
+        };
+        var jsonTest1 = new L.GeoJSON.AJAX(["JALAN_LN_ALL_SLEMAN_Proj.geojson"],{onEachFeature:popUp,style: style1}).addTo(map);
+
+        var style2 = {
+            "color": "Red",
+            "weight":"2.5",
+            "opacity": 0.40
+        };
+        var jsonTest = new L.GeoJSON.AJAX(["ADMIN_AR_DES_SLEMAN_Proj.geojson"],{onEachFeature:popUp,style: style2}).addTo(map);
+
+         /*Plugin Measurement Tool */
+         var measureControl = new L.Control.Measure({
+            position:'topright',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'hectares',
+            secondaryAreaUnit: 'sqmeters',
+            activeColor: '#FF0000',
+            completedColor: '#00FF00'
+            });
+            measureControl.addTo(map);
+
+        /* Image Watermark */
+        L.Control.Watermark = L.Control.extend({
+            onAdd:function(map) {
+                var img = L.DomUtil.create('img');
+                img.src = 'assets/LOGO_SIG_BLUE.png';
+                img.style.width = '200px';
+                return img;
+            }
+        });
+        L.control.watermark = function(opts) {
+            return new L.Control.Watermark(opts);
+        }
+        L.control.watermark({position:'bottomleft'}).addTo(map);
+
+        /* Image Legend */
+        L.Control.Legend = L.Control.extend({
+            onAdd:function(map) {
+                var img = L.DomUtil.create('img');
+                img.src = 'assets/legenda.jpg';
+                img.style.width = '300px';
+                return img;
+            }
+        });
+        L.control.Legend = function(opts) {
+            return new L.Control.Legend(opts);
+        }
+        L.control.Legend({position:'bottomleft'}).addTo(map);
+
+        /*Plugin Search */
+		var searchControl = new L.Control.Search({
+			position:"topleft",
+			layer: jsonTest, //Nama variabel layer
+			propertyName: 'DESA', //Field untuk pencarian
+			marker: false,
+			moveToLocation: function(latlng, title, map) {
+				var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+				map.setView(latlng, zoom);
+			}
+		});
+		searchControl.on('search:locationfound', function(e) {
+			e.layer.setStyle({
+				fillColor: '#ffff00',
+				color: '#0000ff'
+			});
+		}).on('search:collapse', function(e) {
+			featuresLayer.eachLayer(function(layer) {
+				featuresLayer.resetStyle(layer);
+			});
+		});
+		map.addControl(searchControl);
+
+            /*Plugin Geolocation */
+        var locateControl = L.control.locate({
+            position: "topleft",
+            drawCircle: true,
+            follow: true,
+            setView: true,
+            keepCurrentZoomLevel: false,
+            markerStyle: {
+            weight: 1,
+            opacity: 0.8,
+            fillOpacity: 0.8,
+            },
+            circleStyle: {
+                weight: 1,
+                clickable: false,
+            },
+            icon: "fas fa-crosshairs",
+
+            metric: true,
+            strings: {
+            title: "Click for Your Location",
+            popup: "You're here. Accuracy {distance} {unit}",
+            outsideMapBoundsMsg: "Not available"
+            },
+            locateOptions: {
+            maxZoom: 16,
+            watch: true,
+            enableHighAccuracy: true,
+            maximumAge: 10000,
+            timeout: 10000
+            },
+        }).addTo(map);
+
+        
+        /*Plugin EasyPrint */
+        L.easyPrint({
+            title: "Print",
+        }).addTo(map);
+
+        /*Plugin Marker Cluster */
+        var markers = L.markerClusterGroup();
+        var geoJsonLayer = L.geoJSON(datatitik, {
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(feature.properties.Lowis);
+            },
+        });
+        markers.addLayer(geoJsonLayer);
+
+        /*Plugin Routing Machine */
+        L.Routing.control({
+            routeWhileDragging: true,
+            reverseWaypoints: true,
+            autoRoute: true,
+            geocoder: L.control.Geocoder.nomination(),
+        }).addTo(map);
+        L.Control.geocoder().addTo(map);
+    </script>
+</body>
+</html>
